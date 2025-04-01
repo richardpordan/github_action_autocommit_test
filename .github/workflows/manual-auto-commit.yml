@@ -32,9 +32,20 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      # Delete live branch
+      - run: |
+          git push origin --delete live
+          git checkout -b live
+          git push origin live
+
       # Other steps that change files in the repository go here
       - run: mkdir -p ./output
       - run: date > ./output/date.txt
 
       # Commit all changed files back to the repository
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - run: |
+          git config --global user.name ${{ github.actor }}
+          git config --global user.email ${{ github.actor }}@users.noreply.github.com
+          git add -A
+          git commit -m 'Automated commit'
+          git push origin live
